@@ -16,14 +16,19 @@ import citrus.objects.platformer.box2d.Sensor;
 import citrus.physics.box2d.Box2D;
 import citrus.physics.box2d.Box2DUtils;
 import citrus.utils.objectmakers.ObjectMaker2D;
+import citrus.view.starlingview.StarlingCamera;
 
 import flash.display.MovieClip;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 
 public class Level1 extends StarlingState implements IState {
     private var level:MovieClip;
     private var hero:Hero;
     private var fall:Sensor;
     private var reset:Boolean;
+    private var cam:StarlingCamera;
+    private var spikes:Sensor;
     public function Level1(lvl:MovieClip)
     {
         super();
@@ -44,7 +49,13 @@ public class Level1 extends StarlingState implements IState {
 
         fall = getObjectByName("fall") as Sensor;
         fall.onBeginContact.add(onFall);
+        spikes = getObjectByName("spikes") as Sensor;
+        spikes.onBeginContact.add(onDie);
+
+        cam = view.camera as StarlingCamera;
+        cam.setUp(hero, new Rectangle(0, 0, 2000, 768), new Point(.5,.5), new Point(.25,.05));
     }
+
     override public function update(timeDelta:Number):void
     {
         super.update(timeDelta);
@@ -59,14 +70,17 @@ public class Level1 extends StarlingState implements IState {
         hero.y = y;
         reset = false;
     }
-
-    private function onFall(c:b2PolygonContact):void {
-        if(Box2DUtils.CollisionGetOther(fall, c)is Hero){
-            trace("hero fall");
+        private function onFall(c:b2PolygonContact):void {
+            if(Box2DUtils.CollisionGetOther(fall, c)is Hero){
+                trace("hero fall");
+                reset = true;
+            }
+        }
+    private function onDie(c:b2PolygonContact):void {
+        if(Box2DUtils.CollisionGetOther(spikes, c)is Hero){
+            trace("hero died");
             reset = true;
         }
-
-
     }
 
 }
