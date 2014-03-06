@@ -29,6 +29,7 @@ public class Level1 extends StarlingState implements IState {
     private var reset:Boolean;
     private var cam:StarlingCamera;
     private var spikes:Sensor;
+    private var spikes2:Sensor;
     public function Level1(lvl:MovieClip)
     {
         super();
@@ -44,13 +45,15 @@ public class Level1 extends StarlingState implements IState {
         add(b2d);
         ObjectMaker2D.FromMovieClip(level);
 
-        hero = new Hero("hero", {x:142, y:304, width:66, height:92, view:"../sprites/front.png"});
+        hero = new Hero("hero", {x:142, y:304, width:66, height:92, view:"../sprites/hero_walk.swf"});
         add(hero);
 
         fall = getObjectByName("fall") as Sensor;
         fall.onBeginContact.add(onFall);
         spikes = getObjectByName("spikes") as Sensor;
         spikes.onBeginContact.add(onDie);
+        spikes2 = getObjectByName("spike2") as Sensor;
+        spikes2.onBeginContact.add(onDie);
 
         cam = view.camera as StarlingCamera;
         cam.setUp(hero, new Rectangle(0, 0, 2000, 768), new Point(.5,.5), new Point(.25,.05));
